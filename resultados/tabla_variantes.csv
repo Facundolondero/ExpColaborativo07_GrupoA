@@ -1,0 +1,5 @@
+variante,primer_mes,n_semillas,ganancia_media,desvio_entre_semillas,n_pares_vs_V0,dif_media_vs_V0,dif_desvio,semillas_que_superan_V0,wilcoxon_p,veredicto
+V0_todo,202005,10,19.9623,2.3947,,,,,,
+V1_sinASPO,202011,10,21.6197,2.0028,10.0,1.6574,3.2678,7.0,0.1309,no gana
+V2_2021,202101,10,24.5013,4.0821,10.0,4.539,5.1378,8.0,0.0137,gana
+V3_ultimos4,202103,10,25.0426,3.5371,10.0,5.0803,3.4857,10.0,0.002,gana

@@ -1,0 +1,56 @@
+Resultados del Experimento 07, Grupo A (completo)
+Archivos de puntajes: puntajes_kaggle_facundolonderoj.csv, puntajes_kaggle_franciscomedinaraed.csv
+Semillas del vector con las 4 variantes completas: 10 de 10 -> [150001, 222247, 199999, 777781, 999983, 101929, 232327, 456791, 454451, 123457]
+Metrica de cada corrida: máximo Public de los 6 cortes (chequeo con promedio Public de los 6 cortes)
+
+Ganancia de cada corrida (máximo Public de los 6 cortes), por semilla y variante:
+variante  V0_todo  V1_sinASPO  V2_2021  V3_ultimos4  dif_V1_sinASPO_vs_V0  dif_V2_2021_vs_V0  dif_V3_ultimos4_vs_V0
+semilla                                                                                                            
+150001      19.07       22.32    20.07        27.65                  3.25               1.00                   8.58
+222247      17.57       21.32    20.65        20.40                  3.75               3.08                   2.83
+199999      20.74       23.90    28.82        24.90                  3.17               8.08                   4.16
+777781      23.32       21.40    20.82        28.07                 -1.92              -2.50                   4.75
+999983      20.49       24.24    25.07        24.40                  3.75               4.58                   3.91
+101929      19.40       17.57    28.98        30.81                 -1.83               9.58                  11.41
+232327      19.82       22.49    24.98        22.40                  2.66               5.16                   2.58
+456791      18.16       20.24    20.74        19.40                  2.08               2.58                   1.25
+454451      16.74       22.82    31.40        26.15                  6.08              14.66                   9.41
+123457      24.32       19.90    23.48        26.23                 -4.41              -0.83                   1.92
+promedio    19.96       21.62    24.50        25.04                  1.66               4.54                   5.08
+desvio       2.39        2.00     4.08         3.54                  3.27               5.14                   3.49
+
+Ganancia media por corte y variante:
+variante  V0_todo  V1_sinASPO  V2_2021  V3_ultimos4
+envios                                             
+800         14.86       19.68    16.31        19.70
+900         15.34       18.65    17.56        21.07
+1000        15.72       18.60    21.07        21.67
+1100        14.63       18.17    22.45        22.30
+1200        16.36       18.36    23.07        22.24
+1300        16.69       18.16    22.08        21.60
+
+Comparacion pareada contra V0 (máximo Public de los 6 cortes):
+   variante  primer_mes  n_semillas  ganancia_media  desvio_entre_semillas  n_pares_vs_V0  dif_media_vs_V0  dif_desvio  semillas_que_superan_V0  wilcoxon_p veredicto
+    V0_todo      202005          10         19.9623                 2.3947            NaN              NaN         NaN                      NaN         NaN       NaN
+ V1_sinASPO      202011          10         21.6197                 2.0028           10.0           1.6574      3.2678                      7.0      0.1309   no gana
+    V2_2021      202101          10         24.5013                 4.0821           10.0           4.5390      5.1378                      8.0      0.0137      gana
+V3_ultimos4      202103          10         25.0426                 3.5371           10.0           5.0803      3.4857                     10.0      0.0020      gana
+
+Chequeo con promedio Public de los 6 cortes:
+   variante  primer_mes  n_semillas  ganancia_media  desvio_entre_semillas  n_pares_vs_V0  dif_media_vs_V0  dif_desvio  semillas_que_superan_V0  wilcoxon_p veredicto
+    V0_todo      202005          10         15.6011                 2.5309            NaN              NaN         NaN                      NaN         NaN       NaN
+ V1_sinASPO      202011          10         18.6021                 1.7405           10.0           3.0010      3.4074                      7.0      0.0273      gana
+    V2_2021      202101          10         20.4218                 3.0395           10.0           4.8207      3.8186                      9.0      0.0039      gana
+V3_ultimos4      202103          10         21.4310                 3.1050           10.0           5.8299      2.5130                     10.0      0.0020      gana
+
+Todos contra todos (Wilcoxon pareado exacto, correccion de Holm):
+   variante     contra  n_pares  dif_media  gana  wilcoxon_p  p_holm
+ V1_sinASPO    V0_todo       10     1.6574     7      0.1309  0.2617
+    V2_2021    V0_todo       10     4.5390     8      0.0137  0.0684
+V3_ultimos4    V0_todo       10     5.0803    10      0.0020  0.0117
+    V2_2021 V1_sinASPO       10     2.8816     7      0.0840  0.2520
+V3_ultimos4 V1_sinASPO       10     3.4229     7      0.0488  0.1953
+V3_ultimos4    V2_2021       10     0.5413     4      0.9219  0.9219
+
+Con 10 pares, el p minimo posible del Wilcoxon a dos colas es 0.0020.
+Recomendacion: entrenar desde 202103 (V3_ultimos4)
