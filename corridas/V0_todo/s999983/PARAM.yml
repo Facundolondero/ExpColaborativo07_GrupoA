@@ -1,0 +1,108 @@
+problema: 07 - Utilizacion de los meses de pandemia (Gerencial, Grupo A)
+grupo: A
+semilla_primigenia: 999983.0
+variante: V0_todo
+variante_descripcion: 'linea base de la catedra: todos los meses, incluye el ASPO
+  (202005-202106)'
+dataset: gerencial_competencia_2026.csv.gz
+corregir_bug_c_fijos_mejores: yes
+trainingstrategy:
+  validate: 202107.0
+  training:
+  - 202106.0
+  - 202105.0
+  - 202104.0
+  - 202103.0
+  - 202102.0
+  - 202101.0
+  - 202012.0
+  - 202011.0
+  - 202010.0
+  - 202009.0
+  - 202008.0
+  - 202007.0
+  - 202006.0
+  - 202005.0
+  training_pct: 1.0
+  positivos:
+  - BAJA+1
+  - BAJA+2
+  final_train:
+  - 202107.0
+  - 202106.0
+  - 202105.0
+  - 202104.0
+  - 202103.0
+  - 202102.0
+  - 202101.0
+  - 202012.0
+  - 202011.0
+  - 202010.0
+  - 202009.0
+  - 202008.0
+  - 202007.0
+  - 202006.0
+  - 202005.0
+  future: 202109.0
+out:
+  n_train: 179449
+  pos_train: 1673.0
+  baja2_train: 853
+  lgbm:
+    AUC: 0.9532221
+    mejores_hiperparametros:
+      num_leaves: 512.0
+      min_data_in_leaf: 64.0
+      num_iterations: 493
+  n_final_train: 192651
+  param_final:
+    objective: binary
+    metric: auc
+    first_metric_only: yes
+    boost_from_average: yes
+    feature_pre_filter: no
+    verbosity: -100.0
+    force_row_wise: yes
+    seed: 999983.0
+    max_bin: 31.0
+    learning_rate: 0.03
+    feature_fraction: 0.5
+    num_leaves: 512.0
+    min_data_in_leaf: 64.0
+    num_iterations: 493
+  minutos: 76.88
+lgbm:
+  param_fijos:
+    objective: binary
+    metric: auc
+    first_metric_only: yes
+    boost_from_average: yes
+    feature_pre_filter: no
+    verbosity: -100.0
+    force_row_wise: yes
+    seed: 999983.0
+    max_bin: 31.0
+    learning_rate: 0.03
+    feature_fraction: 0.5
+    num_iterations: 2048.0
+    early_stopping_rounds: 200.0
+    num_leaves: 64.0
+    min_data_in_leaf: 128.0
+kaggle:
+  competencia: labo-1-virtual-2026-manager
+  cortes:
+  - 600.0
+  - 650.0
+  - 700.0
+  - 750.0
+  - 800.0
+  - 850.0
+  - 900.0
+  - 950.0
+  - 1000.0
+  - 1050.0
+  - 1100.0
+  - 1150.0
+  - 1200.0
+  - 1250.0
+  - 1300.0

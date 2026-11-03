@@ -1,0 +1,7 @@
+variante,contra,n_pares,dif_media,gana,wilcoxon_p,p_holm
+V1_sinASPO,V0_todo,10,1.6574,7,0.1309,0.2617
+V2_2021,V0_todo,10,4.539,8,0.0137,0.0684
+V3_ultimos4,V0_todo,10,5.0803,10,0.002,0.0117
+V2_2021,V1_sinASPO,10,2.8816,7,0.084,0.252
+V3_ultimos4,V1_sinASPO,10,3.4229,7,0.0488,0.1953
+V3_ultimos4,V2_2021,10,0.5413,4,0.9219,0.9219

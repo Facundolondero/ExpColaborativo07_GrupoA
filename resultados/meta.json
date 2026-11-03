@@ -1,0 +1,20 @@
+{
+ "metrica": "max",
+ "descripcion": "máximo Public de los 6 cortes",
+ "otra": "mean",
+ "descripcion_otra": "promedio Public de los 6 cortes",
+ "n_semillas": 10,
+ "provisorio": false,
+ "semillas": [
+  150001,
+  222247,
+  199999,
+  777781,
+  999983,
+  101929,
+  232327,
+  456791,
+  454451,
+  123457
+ ]
+}
