@@ -1,0 +1,12 @@
+# lo que generan los scripts al correr
+__pycache__/
+scripts/datasets/
+scripts/runs/
+scripts/runs_test/
+scripts/resultados_grid.csv
+scripts/resultados_test.csv
+scripts/log_batch.txt
+scripts/envios_log.csv
+scripts/slides/*.pptx
+puntajes/puntajes_corridas.csv
+puntajes/puntajes_resumen_*.csv

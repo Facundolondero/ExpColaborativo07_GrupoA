@@ -21,7 +21,8 @@ from pptx.oxml.ns import qn
 from pptx.util import Inches, Pt
 
 AQUI = Path(__file__).resolve().parent
-RES = AQUI.parent / "resultados"
+# en la carpeta de trabajo resultados/ esta al lado de slides/; en el repositorio, dos niveles arriba
+RES = AQUI.parent / "resultados" if (AQUI.parent / "resultados").is_dir() else AQUI.parent.parent / "resultados"
 SALIDA = AQUI / "Exp07_GrupoA_capitulos_finales.pptx"
 REPO_URL = "github.com/Facundolondero/ExpColaborativo07_GrupoA"
 
