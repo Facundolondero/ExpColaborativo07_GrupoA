@@ -5,21 +5,20 @@
                                   semillas del vector del experimento (SEMILLAS_VECTOR en exp07_bajar_puntajes.py) y
                                   deja todo en resultados/
 
-Mientras el vector tenga menos de 10 semillas, todo sale marcado como provisorio. Cuando Francisco pase sus 5
-semillas, completar SEMILLAS_FRANCISCO en exp07_bajar_puntajes.py, copiar su puntajes_kaggle_<usuario>.csv a esta
-carpeta y volver a correr este script (y despues slides/build_pptx_resultados.py).
+La ganancia de cada corrida es METRICA: el maximo Public de los 6 cortes, criterio de la catedra; el promedio queda
+como chequeo. Mientras el vector tenga menos de 10 semillas, todo sale marcado como provisorio.
 
 Salidas en resultados/:
-  tabla_semilla_variante.csv   ganancia de cada corrida (promedio Public de los 6 cortes) por semilla y variante,
+  tabla_semilla_variante.csv   ganancia de cada corrida (METRICA) por semilla y variante,
                                diferencias contra V0, y las filas promedio y desvio
   tabla_variantes.csv          por variante: media, desvio, diferencia pareada contra V0, semillas que superan a V0,
                                p del Wilcoxon exacto a dos colas y veredicto (pendiente mientras falten semillas)
   tabla_cortes.csv             por variante y corte: media, desvio, minimo y maximo entre semillas
-  chequeo_maximo.csv           como tabla_variantes pero con la otra metrica (el mejor corte de cada corrida en vez del
-                               promedio, o al reves si METRICA = "max"; entonces se llama chequeo_promedio.csv)
+  chequeo_promedio.csv         como tabla_variantes pero con la otra metrica (el promedio de los 6 cortes de cada
+                               corrida; si METRICA = "mean", es el maximo y se llama chequeo_maximo.csv)
   pairwise_holm.csv            las 6 comparaciones pareadas entre las 4 variantes con correccion de Holm (todos contra
                                todos, como pairwise.wilcox.test(paired = TRUE) de R; V0 es una variante mas)
-  meta.json                    metrica usada, cantidad de semillas y si es provisorio (lo lee build_pptx_resultados.py)
+  meta.json                    metrica usada, cantidad de semillas y si es provisorio (lo lee slides/build_pptx_final.py)
   curvas_por_corte.png         ganancia media por corte, una curva por variante
   dispersion_por_variante.png  un panel por variante con la curva de cada semilla, el promedio y el promedio de V0
   diferencias_vs_V0.png        diferencia de cada recorte contra V0, semilla por semilla
@@ -39,7 +38,7 @@ from matplotlib.lines import Line2D  # noqa: E402
 from matplotlib.patches import BoxStyle, FancyBboxPatch, Patch, Rectangle  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from exp07_bajar_puntajes import (BASE, CORTES, ORDEN_VARIANTES, PRIMER_MES,  # noqa: E402
+from exp07_bajar_puntajes import (BASE, CARPETA_PUNTAJES, CORTES, ORDEN_VARIANTES, PRIMER_MES,  # noqa: E402
                                   SEMILLAS_VECTOR, wilcoxon_p)
 
 SALIDA = BASE / "resultados"
@@ -96,7 +95,7 @@ def marcador(**extra):
 # ----------------------------------------------------------------------------------------------- datos
 
 def cargar():
-    archivos = sorted(a for a in BASE.glob("puntajes_kaggle_*.csv") if not a.name.startswith("puntajes_kaggle_v2_"))
+    archivos = sorted(a for a in CARPETA_PUNTAJES.glob("puntajes_kaggle_*.csv") if not a.name.startswith("puntajes_kaggle_v2_"))
     if not archivos:
         sys.exit("No hay puntajes_kaggle_*.csv: correr antes exp07_bajar_puntajes.py")
     df = pd.concat([pd.read_csv(a) for a in archivos], ignore_index=True)

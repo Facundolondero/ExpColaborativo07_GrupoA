@@ -55,11 +55,10 @@ variantes_B <- list(
 )
 variantes <- if (grupo == "A") variantes_A else variantes_B
 
-# 10 semillas primas: 553897 (la usada en toda la materia), 4 generadas en la Tarea Hogar 02 y las 5 del
-# CheckIn de Facundo. Van en este orden; cada semilla corre las 4 variantes antes de pasar a la siguiente.
-# (El Grupo B reemplaza este vector por sus propias semillas; ver README_grupoB.txt)
-semillas <- c(553897, 761897, 815197, 906187, 919531,
-              150001, 222247, 199999, 777781, 999983)
+# Vector de semillas del experimento: las 5 primigenias de Facundo y las 5 de Francisco. Van en este orden; cada
+# semilla corre las 4 variantes antes de pasar a la siguiente. (El Grupo B usa sus propias semillas.)
+semillas <- c(150001, 222247, 199999, 777781, 999983,
+              101929, 232327, 456791, 454451, 123457)
 
 sufijo <- if (grupo == "A") "" else "_B"
 if (modo == "test") {

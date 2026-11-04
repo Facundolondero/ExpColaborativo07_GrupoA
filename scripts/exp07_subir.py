@@ -3,8 +3,8 @@
 Por defecto NO sube nada: muestra el plan de lo que falta subir. Solo sube con --subir.
 
   python exp07_subir.py                          plan de todo lo pendiente (modo seco)
-  python exp07_subir.py --semillas 553897        plan de una semilla
-  python exp07_subir.py --semillas 553897 --subir   sube esa semilla (24 archivos)
+  python exp07_subir.py --semillas 150001        plan de una semilla
+  python exp07_subir.py --semillas 150001 --subir   sube esa semilla (24 archivos)
   python exp07_subir.py --subir --max 88         sube como mucho 88 archivos y para
 
 Desde el 29-oct, a pedido de Denicolay, se suben solo 6 cortes por corrida: los del notebook de a 100
@@ -31,9 +31,8 @@ RUNS = BASE / "runs"
 LOG = BASE / "envios_log.csv"
 COMPETENCIA = "labo-1-virtual-2026-manager"
 ORDEN_VARIANTES = ["V0_todo", "V1_sinASPO", "V2_2021", "V3_ultimos4"]
-# las 10 semillas oficiales del experimento (999983 es la del CheckIn; la 999979 que corrio el primer batch
-# queda como corrida extra y no se sube)
-ORDEN_SEMILLAS = [553897, 761897, 815197, 906187, 919531, 150001, 222247, 199999, 777781, 999983]
+# las 10 semillas del experimento: 5 de Facundo y 5 de Francisco (cada uno sube las suyas desde su cuenta)
+ORDEN_SEMILLAS = [150001, 222247, 199999, 777781, 999983, 101929, 232327, 456791, 454451, 123457]
 PATRON = re.compile(r"KA07_(?P<variante>.+)_s(?P<semilla>\d+)_(?P<envios>\d+)\.csv$")
 CORTES_A_SUBIR = list(range(800, 1301, 100))
 COLUMNAS_LOG = ["fecha_utc", "archivo", "variante", "semilla", "envios", "mensaje", "resultado", "detalle"]

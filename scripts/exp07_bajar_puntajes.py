@@ -3,11 +3,12 @@
   python exp07_bajar_puntajes.py                 baja la lista de envios y resume
   python exp07_bajar_puntajes.py --solo-resumen  no toca Kaggle; resume lo que ya hay en puntajes_kaggle_*.csv
 
-Desde el 29-oct (pedido de Denicolay) se usan solo los 6 cortes del notebook de a 100, de 800 a 1300: la
-ganancia de cada corrida es el promedio Public de esos 6 cortes, y un recorte es mejor que V0 si el test de
-Wilcoxon pareado por semilla da p < 0,05 a su favor.
+Se usan solo los 6 cortes del notebook de a 100, de 800 a 1300, y un recorte es mejor que V0 si el test de Wilcoxon
+pareado por semilla da p < 0,05 a su favor. Este resumen rapido mide cada corrida con el promedio Public de los 6
+cortes; el analisis final, con el maximo Public (criterio de la catedra) y el promedio como chequeo, esta en
+exp07_resultados.py.
 
-Salidas (en la carpeta del script):
+Salidas (en puntajes/ dentro del repositorio; en la carpeta del script si no hay puntajes/):
   puntajes_kaggle_<usuario>.csv     un renglon por envio del experimento: variante, semilla, envios, public, fecha
   puntajes_resumen_cortes.csv       por variante y corte: n semillas, media, desvio, min, max
   puntajes_corridas.csv             por corrida: cortes puntuados y ganancia (promedio de los 6 cortes)
@@ -15,7 +16,7 @@ Salidas (en la carpeta del script):
                                     superan a V0, p de Wilcoxon y veredicto
 
 Si el companero sube desde su cuenta, corre este mismo script en su PC y manda su
-puntajes_kaggle_<usuario>.csv; al copiarlo en esta carpeta el resumen junta los dos.
+puntajes_kaggle_<usuario>.csv; al copiarlo junto al propio el resumen junta los dos.
 Si un mismo archivo se subio dos veces, se queda con el envio mas reciente.
 Solo entran las semillas de SEMILLAS_VECTOR (5 de Facundo + 5 de Francisco); las demas corridas quedan afuera.
 """
@@ -26,12 +27,15 @@ from pathlib import Path
 
 import pandas as pd
 
-BASE = Path(__file__).resolve().parent
+AQUI = Path(__file__).resolve().parent
+# En el repositorio los scripts estan en scripts/ y los datos un nivel arriba; en la carpeta de trabajo, todo junto.
+BASE = AQUI.parent if AQUI.name == "scripts" else AQUI
+CARPETA_PUNTAJES = BASE / "puntajes" if (BASE / "puntajes").is_dir() else BASE
 COMPETENCIA = "labo-1-virtual-2026-manager"
 ORDEN_VARIANTES = ["V0_todo", "V1_sinASPO", "V2_2021", "V3_ultimos4"]
 PRIMER_MES = {"V0_todo": 202005, "V1_sinASPO": 202011, "V2_2021": 202101, "V3_ultimos4": 202103}
 CORTES = list(range(800, 1301, 100))
-# vector de semillas del experimento: las 5 primigenias de Facundo + las 5 de Francisco (completar cuando las pase).
+# vector de semillas del experimento: las 5 primigenias de Facundo + las 5 de Francisco.
 # Lo que no esta en el vector (por ejemplo las otras 5 semillas de Facundo, que tambien corrieron) no entra en el resumen.
 SEMILLAS_FACUNDO = [150001, 222247, 199999, 777781, 999983]
 SEMILLAS_FRANCISCO = [101929, 232327, 456791, 454451, 123457]   # las 5 primigenias de Francisco (archivo del 02-nov)
@@ -102,7 +106,7 @@ def wilcoxon_p(dif):
 
 
 def resumir():
-    archivos = sorted(a for a in BASE.glob("puntajes_kaggle_*.csv") if not a.name.startswith("puntajes_kaggle_v2_"))
+    archivos = sorted(a for a in CARPETA_PUNTAJES.glob("puntajes_kaggle_*.csv") if not a.name.startswith("puntajes_kaggle_v2_"))
     if not archivos:
         print("No hay archivos puntajes_kaggle_*.csv todavia.")
         return
@@ -116,12 +120,12 @@ def resumir():
     cortes = (df.groupby(["variante", "envios"], observed=True)["public"]
                 .agg(n="count", media="mean", desvio="std", minimo="min", maximo="max")
                 .round(3).reset_index())
-    cortes.to_csv(BASE / "puntajes_resumen_cortes.csv", index=False)
+    cortes.to_csv(CARPETA_PUNTAJES / "puntajes_resumen_cortes.csv", index=False)
 
     # por corrida: la ganancia es el promedio de los 6 cortes; solo entran las corridas con los 6 puntuados
     corridas = (df.groupby(["variante", "semilla"], observed=True)["public"]
                   .agg(cortes="count", ganancia="mean").reset_index())
-    corridas.to_csv(BASE / "puntajes_corridas.csv", index=False)
+    corridas.to_csv(CARPETA_PUNTAJES / "puntajes_corridas.csv", index=False)
     completas = corridas[corridas["cortes"] == len(CORTES)]
 
     # por variante, con comparacion pareada contra V0 (misma semilla)
@@ -149,7 +153,7 @@ def resumir():
                 fila["veredicto"] = "gana" if gana else "no gana"
         filas.append(fila)
     variantes = pd.DataFrame(filas)
-    variantes.to_csv(BASE / "puntajes_resumen_variantes.csv", index=False)
+    variantes.to_csv(CARPETA_PUNTAJES / "puntajes_resumen_variantes.csv", index=False)
 
     pd.set_option("display.width", 160)
     print(f"\nEnvios de los 6 cortes con puntaje: {len(df)}  (archivos: {', '.join(a.name for a in archivos)})")
@@ -180,7 +184,7 @@ def main():
     if not args.solo_resumen:
         envios = bajar_envios()
         df = filtrar_experimento(envios)
-        salida = BASE / f"puntajes_kaggle_{usuario_kaggle()}.csv"
+        salida = CARPETA_PUNTAJES / f"puntajes_kaggle_{usuario_kaggle()}.csv"
         df.to_csv(salida, index=False)
         print(f"Kaggle: {len(envios)} envios en la competencia, {len(df)} del experimento -> {salida.name}")
     resumir()

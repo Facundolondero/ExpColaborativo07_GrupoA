@@ -9,7 +9,7 @@ Cada ciclo (default: cada 15 minutos):
 
   python exp07_vigilar.py                 corre hasta terminar todo
   python exp07_vigilar.py --una-vez       hace un solo ciclo y termina
-  python exp07_vigilar.py --semillas 553897 761897   solo esas semillas (p. ej. si el companero sube las otras)
+  python exp07_vigilar.py --semillas 150001 222247   solo esas semillas (p. ej. si el companero sube las otras)
 
 Para frenarlo: crear un archivo llamado DETENER_vigilar.txt en esta carpeta (lo mira en cada ciclo
 y entre envio y envio). El PID queda en vigilar_pid.txt. Todo lo que hace lo escribe en vigilar_log.txt.
