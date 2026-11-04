@@ -57,7 +57,9 @@ Recomendación: entrenar el modelo final de la z719 desde 202103 (meses 202103 a
   con su AUC y sus iteraciones) e `impo.txt` (importancia de variables).
   Los modelos finales no se suben por tamaño, unos 12 MB cada uno: los guarda el notebook, y en `exp07_lib.R` se activan
   con `guardar_modelo = TRUE`.
-- `filminas/`: las filminas del experimento en PDF.
+- `filminas/`: las filminas del experimento en PDF. `Exp07_GrupoA_para_subir_v3.pdf` son las cargadas antes de las corridas:
+  de ahí siguen vigentes Hipótesis, Bibliografía y Sesgos. Su Diseño, que decía 15 cortes, quedó reemplazado por
+  `Exp07_GrupoA_diseno_6cortes.pdf`, y su Limitaciones por la de `Exp07_GrupoA_capitulos_finales.pdf`, que va de Limitaciones a Anexo.
 
 Las predicciones de cada corrida (`prediccion.txt`) y los 6 archivos subidos a Kaggle (`kaggle/`) se agregan cuando cierre la
 competencia, el 15 de noviembre, para no publicar archivos listos para entregar con Kaggle abierto. Los puntajes de los
