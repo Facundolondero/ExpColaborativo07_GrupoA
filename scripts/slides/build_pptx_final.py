@@ -478,7 +478,7 @@ texto(s, [
 filas = [("Variante", "Primer mes", "Meses", "Filas de training", "BAJA+2", "AUC validación", "Iteraciones")]
 for v in ORDEN:
     filas.append((ETIQUETA[v], PRIMER_MES[v], str(MESES_TRAIN[v]), miles(FILAS_TRAIN[v][0]), miles(FILAS_TRAIN[v][1]),
-                  coma(AUC_MEDIA[v], 3), str(int(ITER_MEDIANA[v]))))
+                  coma(AUC_MEDIA[v], 3), str(int(ITER_MEDIANA[v] + 0.5))))
 TOP_ANEXO = 3.25
 tabla_pptx(s, filas, [2.3, 1.0, 0.8, 1.5, 0.9, 1.3, 1.2], top=TOP_ANEXO, alto_fila=0.27, size=11.5)
 texto(s, ["Meses, filas y BAJA+2 del training (hasta 202106). AUC medio de validación en 202107; no se usa para comparar "
