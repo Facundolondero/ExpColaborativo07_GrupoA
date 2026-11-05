@@ -9,6 +9,7 @@
    python office_to_pdf.py Exp07_GrupoA_capitulos_finales.pptx   (PDF + render por pagina)
 """
 import json
+import re
 from pathlib import Path
 
 import pandas as pd
@@ -16,6 +17,7 @@ from lxml import etree
 from pptx import Presentation
 from pptx.dml.color import RGBColor
 from pptx.enum.shapes import MSO_SHAPE
+from pptx.opc.constants import RELATIONSHIP_TYPE as RT
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.oxml.ns import qn
 from pptx.util import Inches, Pt
@@ -83,6 +85,15 @@ AUC_MEDIA = hv.groupby("variante")["AUC"].mean()
 ITER_MEDIANA = hv.groupby("variante")["num_iterations"].median()
 print(f"corridas del vector: {N_CORRIDAS} | min_data_in_leaf en el borde: {N_BORDE_MDL} | num_leaves en el borde: {N_BORDE_LEAVES}")
 print("AUC medio:", {v: round(AUC_MEDIA[v], 3) for v in ORDEN}, "| iteraciones medianas:", {v: int(ITER_MEDIANA[v]) for v in ORDEN})
+
+# corte en el que cae el maximo de cada corrida: cuantas semillas lo tienen en el primer o el ultimo corte
+CARPETA_PUNTAJES = RES.parent / "puntajes" if (RES.parent / "puntajes").is_dir() else RES.parent
+punt = pd.concat([pd.read_csv(a) for a in sorted(CARPETA_PUNTAJES.glob("puntajes_kaggle_*.csv"))], ignore_index=True)
+punt = punt[punt["semilla"].astype(str).isin([str(x) for x in semillas]) & punt["envios"].isin(CORTES)]
+assert punt.groupby("variante").size().eq(n * len(CORTES)).all(), "faltan o sobran envíos en los puntajes"
+maximos = punt.loc[punt.groupby(["variante", "semilla"])["public"].idxmax()]
+BORDE_CORTE = maximos[maximos["envios"].isin([CORTES[0], CORTES[-1]])].groupby("variante").size().reindex(ORDEN, fill_value=0)
+print("máximo en el primer o último corte:", BORDE_CORTE.to_dict())
 
 # ------------------------------------------------------------------------------------------ primitivas
 prs = Presentation()
@@ -224,15 +235,17 @@ puntos(s, [
     ("V1 no es del todo sin pandemia.",
      "Los lags de noviembre y diciembre de 2020 todavía miran meses del ASPO. Ese efecto lo estudia el Problema #05."),
     ("Cortes del notebook.",
-     "La curva media de V0 todavía sube en 1.300 envíos y la de V1 es más alta en 800, así que el máximo de esas dos "
-     "variantes puede estar algo subestimado."),
+     "La curva media de V0 todavía sube en 1.300 envíos y la de V1 es más alta en 800, así que sus máximos pueden estar "
+     f"algo subestimados: el máximo de la corrida cae en el primer o el último corte en {BORDE_CORTE['V0_todo']} de {n} "
+     f"semillas en V0, {BORDE_CORTE['V1_sinASPO']} en V1, {BORDE_CORTE['V2_2021']} en V2 y {BORDE_CORTE['V3_ultimos4']} en V3."),
     ("Grilla del baseline.",
      f"El grid search eligió min_data_in_leaf = 64, el borde de la grilla, en {N_BORDE_MDL} de nuestras {N_CORRIDAS} "
      f"corridas, y num_leaves = 512 en {N_BORDE_LEAVES}. No la ampliamos para no tocar el workflow; con una grilla más "
      "amplia las ganancias podrían ser otras."),
     ("Alcance.",
-     "Con 10 semillas el p mínimo del Wilcoxon es 0,002, y una diferencia chica, como la de V2 contra V3, no se detecta. "
-     "El corte del ASPO es el del AMBA y no sabemos dónde viven los clientes. Los resultados del Grupo B, sobre julio de "
+     # el semiancho del IC 95 % de la diferencia pareada va de 2,3 a 3,7 puntos segun la comparacion
+     "Con 10 semillas el p mínimo del Wilcoxon es 0,002, y con este ruido no se distinguen diferencias menores a unos 3 "
+     "puntos, como la de V2 contra V3. El corte del ASPO es el del AMBA y no sabemos dónde viven los clientes. Los resultados del Grupo B, sobre julio de "
      "2021, se comparan con estos solo en conclusiones, no en ganancia."),
 ], top=1.1, alto=4.4, size=12, despues=6)
 
@@ -375,7 +388,11 @@ texto(s, [
     "El resultado es sobre el Public de un solo mes y con el máximo de 6 cortes; el Private del 15 de noviembre es la "
     "prueba de fuego. La curva de V0 todavía sube en 1.300 envíos, así que su máximo puede estar algo subestimado, "
     "pero con 5 puntos de diferencia y 10 de 10 semillas es difícil que eso dé vuelta el resultado.",
-], top=1.1, alto=4.4, size=12.5, despues=7)
+    "Con otros problemas: el Grupo B del Problema #01 no encontró diferencia significativa al reparar las variables rotas "
+    "de junio de 2020 (interpolar +0,96, p 0,195), y con esta receta ese mes queda afuera, así que esa decisión deja de "
+    "importar. En el Problema #08, con otro dataset, sacarle a la búsqueda meses recientes para validar en más meses no "
+    "mejoró (3 meses: −3,44, p 0,11): va en el mismo sentido, pero sin significación.",
+], top=1.05, alto=4.5, size=12, despues=6)
 
 # ======================================================================================== 9. Conclusiones
 s = filmina("Conclusiones")
@@ -392,18 +409,20 @@ texto(s, [
     [("Qué no sabemos. ", AMARILLO, 13, True),
      ("Si vale para otros meses y para el Private. Con el promedio de los cortes, la métrica original del diseño, el "
       "orden es el mismo y los tres recortes pasan la regla.", BLANCO)],
-    [("Grupo B (julio de 2021, sin Kaggle). ", AMARILLO, 13, True),
-     ("Completar con lo que encuentre Gabriela. Si coincide, la conclusión se refuerza; si no, el efecto depende del "
-      "mes que se predice.", BLANCO)],
+    [("Grupo B. ", AMARILLO, 13, True),
+     ("Prueba otra palanca: bajarles el peso a esos meses en vez de sacarlos, evaluando en julio de 2021 sin Kaggle. Sus "
+      "ganancias no se comparan con las nuestras. Si llega a lo mismo, la conclusión se refuerza; si no, el efecto depende "
+      "del mes que se predice o de la forma de recortar.", BLANCO)],
 ], top=1.1, alto=4.4, size=13, despues=9)
 
 # ======================================================================================== 10. Recomendacion
 s = filmina("Recomendación concreta")
 texto(s, [[("Para la predicción final gerencial con la z719: ", BLANCO),
-           ("entrenar el modelo final solo con los meses 202103 a 202107", AMARILLO, 14, True),
-           (", de marzo a julio de 2021, dejando afuera todo 2020 y enero y febrero de 2021, sin tocar nada más del "
-            "workflow.", BLANCO)]],
-      top=1.08, alto=0.75, size=14, despues=0)
+           ("entrenar solo desde marzo de 2021", AMARILLO, 14, True),
+           (": training del grid 202103 a 202106, validación 202107 y modelo final 202103 a 202107. Todo 2020 y enero y "
+            "febrero de 2021 quedan afuera. El modelo final se arma con modifyList, como en el experimento; nada más "
+            "cambia.", BLANCO)]],
+      top=1.02, alto=0.85, size=13.5, despues=0)
 
 # tira de meses: 15 meses con clase (202005 a 202107), un hueco y el mes a predecir (202109)
 MESES = ["may", "jun", "jul", "ago", "sep", "oct", "nov", "dic", "ene", "feb", "mar", "abr", "may", "jun", "jul"]
@@ -453,8 +472,8 @@ puntos(s, [
      "Ampliarla cuando el óptimo cae en el borde (min_data_in_leaf por debajo de 64, num_leaves por encima de 512) y "
      "repetir el experimento con la grilla nueva."),
     ("Validación en varios meses.",
-     "Validar sobre varios meses con clase conocida, como hace el Grupo B, y elegir el primer mes de training con walk "
-     "forward validation en lugar de un solo mes."),
+     "Elegir el primer mes de training validando sobre varios meses con clase conocida o con walk forward validation, en "
+     "lugar de un solo mes, en la línea de los Problemas #08 y #10."),
     ("Dataset de los analistas y Problema #05.",
      "El mismo experimento con el dataset que tiene meses previos a la pandemia, para probar «sin pandemia» de verdad y "
      "no solo «sin ASPO». Y combinarlo con el #05: limpiar los lags que miran meses del ASPO en vez de sacar los meses."),
@@ -485,6 +504,16 @@ tabla_pptx(s, filas, [2.3, 1.0, 0.8, 1.5, 0.9, 1.3, 1.2], top=TOP_ANEXO, alto_fi
 texto(s, ["Meses, filas y BAJA+2 del training (hasta 202106). AUC medio de validación en 202107; no se usa para comparar "
           "variantes. Iteraciones: mediana del modelo final, elegidas por early stopping (200) sobre un tope de 2.048."],
       top=TOP_ANEXO + 0.27 * len(filas) + 0.18, alto=0.6, size=10.5, despues=0)
+
+# el link del repositorio queda clickeable, y en amarillo: el color de los links sale del tema, no del texto
+for sh in s.shapes:
+    if sh.has_text_frame:
+        for parrafo in sh.text_frame.paragraphs:
+            for corrida in parrafo.runs:
+                if corrida.text == REPO_URL:
+                    corrida.hyperlink.address = "https://" + REPO_URL
+tema = prs.slide_masters[0].part.part_related_by(RT.THEME)
+tema._blob = re.sub(rb'(<a:(?:hlink|folHlink)>\s*<a:srgbClr val=")[0-9A-Fa-f]{6}', rb"\g<1>" + AMARILLO.encode(), tema.blob)
 
 prs.save(str(SALIDA))
 print("guardado:", SALIDA, "| filminas:", len(prs.slides))
