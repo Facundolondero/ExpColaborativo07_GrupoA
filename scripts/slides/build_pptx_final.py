@@ -230,10 +230,24 @@ puntos(s, [
     ("Cambio de métrica.",
      "El diseño decía promedio de los cortes; la cátedra aclaró después que en Kaggle la ganancia de una corrida es el "
      "máximo del Public. Reportamos el máximo y dejamos el promedio como chequeo: las dos dan el mismo ganador."),
+    ("No hay una línea base sin pandemia.",
+     "En el dataset gerencial, «todos los meses» empieza en 202005, es decir, en plena pandemia. El experimento compara "
+     "cuánta pandemia dejar, no pandemia contra prepandemia."),
     ("Menos datos y menos pandemia van juntos.",
      "V3 entrena con el 29 % de las filas y el 39 % de las bajas de V0; el experimento no separa los dos efectos."),
+    ("Los primeros meses de V0 están incompletos.",
+     "El dataset gerencial arranca en 202005: ese mes no tiene lags y 202006 no tiene el de orden 2, y además 202006 tiene "
+     "12 variables catastróficas en NA. V0 es la única variante que entrena con esos meses, así que parte de su menor "
+     "ganancia puede deberse a la calidad de los datos y no a la pandemia."),
     ("V1 no es del todo sin pandemia.",
      "Los lags de noviembre y diciembre de 2020 todavía miran meses del ASPO. Ese efecto lo estudia el Problema #05."),
+], top=1.1, alto=4.4, size=13, despues=8)
+
+s = filmina("Limitaciones (continuación)")
+puntos(s, [
+    ("La validación es un único mes.",
+     "El grid search y el early stopping se deciden solo con el AUC de 202107. Si julio no representa bien a septiembre, "
+     "los hiperparámetros elegidos pueden no ser los óptimos."),
     ("Cortes del notebook.",
      "La curva media de V0 todavía sube en 1.300 envíos y la de V1 es más alta en 800, así que sus máximos pueden estar "
      f"algo subestimados: el máximo de la corrida cae en el primer o el último corte en {BORDE_CORTE['V0_todo']} de {n} "
@@ -247,7 +261,7 @@ puntos(s, [
      "Con 10 semillas el p mínimo del Wilcoxon es 0,002, y con este ruido no se distinguen diferencias menores a unos 3 "
      "puntos, como la de V2 contra V3. El corte del ASPO es el del AMBA y no sabemos dónde viven los clientes. Los resultados del Grupo B, sobre julio de "
      "2021, se comparan con estos solo en conclusiones, no en ganancia."),
-], top=1.1, alto=4.4, size=12, despues=6)
+], top=1.1, alto=4.4, size=13, despues=8)
 
 # ======================================================================================== 2. Resultados: tabla
 s = filmina("Resultados: ganancia por semilla y variante")
